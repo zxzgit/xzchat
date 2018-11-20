@@ -1,0 +1,16 @@
+{
+    "name": "zxzgit/yii2-xzchat",
+    "type": "project",
+    "authors": [
+        {
+            "name": "zxz",
+            "email": "578226426@qq.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "xzchat\\": ""
+        }
+    },
+    "require": {}
+}

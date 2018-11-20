@@ -49,3 +49,5 @@ crawl/postgroup/postgroup/__pycache__/
 crawl/postgroup/postgroup/spiders/__pycache__/
 crawl/maoyan/maoyan/__pycache__/
 crawl/maoyan/maoyan/spiders/__pycache__/
+
+/vendor/
