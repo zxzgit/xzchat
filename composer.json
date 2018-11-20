@@ -1,6 +1,6 @@
 {
     "name": "zxzgit/yii2-xzchat",
-    "type": "project",
+    "type": "yii2-extension",
     "authors": [
         {
             "name": "zxz",
