@@ -9,6 +9,7 @@ namespace xzchat\libs\message\controllers;
 
 use xzchat\libs\RedisKeyDict;
 use xzchat\libs\service\RoomService;
+use xzchat\XzChatApp;
 
 class RoomController extends AbstractController {
     
@@ -21,7 +22,7 @@ class RoomController extends AbstractController {
             $redisKey = RedisKeyDict::getHashRoomFdList($roomId);
             $start    = 0;
             $batchNum = 100;
-            while ($batchFdList = \App::$connector->redis->zRevRange($redisKey, $start, $start + ($batchNum - 1))) {
+            while ($batchFdList = XzChatApp::$connector->redis->zRevRange($redisKey, $start, $start + ($batchNum - 1))) {
                 print_r($batchFdList);
                 //给同房间的用户发通知
                 foreach ($batchFdList as $fd) {

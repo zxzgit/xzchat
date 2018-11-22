@@ -9,10 +9,11 @@ namespace xzchat\libs\service;
 
 
 use xzchat\libs\RedisKeyDict;
+use xzchat\XzChatApp;
 
 class RoomService extends BaseService {
     static function fdRelativeToRoom($fd, $roomId) {
         $redisKey = RedisKeyDict::getHashRoomFdList($roomId);
-        \App::$connector->redis->zAdd($redisKey, time(), $fd);
+        XzChatApp::$connector->redis->zAdd($redisKey, time(), $fd);
     }
 }
