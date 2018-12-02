@@ -11,6 +11,9 @@ use xzchat\libs\message\MessageHandler;
 
 class ConnectCollection
 {
+    public $moduleList = [];
+    public $module;
+    public $defaultController = 'index';
     public $messageDistributor;
     /**
      * @var array 钩子

@@ -19,12 +19,16 @@ class MessageDistributor {
     public $frame;
     public $route;
     public $data;
-    public $defaultRoute = 'index/index';
+
+    /**
+     * @var MessageModule
+     */
+    public $module;
     
     function __construct(&$connector, &$frame, $data) {
         $this->connector = &$connector;
         $this->frame     = $frame;
-        $this->route     = isset($data['route']) && trim($data['route']) ? (string)$data['route'] : $this->defaultRoute;
+        $this->route     = isset($data['route']) && trim($data['route']) ? (string)$data['route'] : '';
         $this->data      = $data;
     }
     
@@ -49,16 +53,15 @@ class MessageDistributor {
     public function simpleRoute() {
         $refObj = new \ReflectionObject($this);
         $routeInfo = explode('/', $this->route);
-        $routeInfo = array_pad($routeInfo, 2, '');
-        
-        $module     = $routeInfo[0];
-        $action     = array_pop($routeInfo);
-        $controller = array_pop($routeInfo);
 
-        $baseMsgLibDir = dirname(__FILE__);
-        if (is_file(implode(DIRECTORY_SEPARATOR, [$baseMsgLibDir, 'modules', $module, 'Module.php']))) {
-            //todo 导向模块
+        //路由控制
+        if (isset($routeInfo[0]) && key_exists($module = $routeInfo[0], $this->connector->moduleList)) {
+            //导向模块
+            $this->module = new $this->connector->moduleList[$module]($this,array_slice($routeInfo,1));
+            return $this->module->run();
         } else {
+            $action     = array_pop($routeInfo);
+            $controller = array_pop($routeInfo)?: $this->connector->defaultController;
             /** @var AbstractController $msgProcessor */
             $msgProcessorClass = implode('\\', array_filter([$refObj->getNamespaceName(), 'controllers', implode('\\', $routeInfo), ucfirst($controller) . 'Controller']));
             $msgProcessor      = (new $msgProcessorClass($this, $this->frame, $this->data, ['action' => $action, 'data' => isset($this->data['data']) ? $this->data['data'] : []]));

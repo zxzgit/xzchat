@@ -22,7 +22,11 @@ class RoomController extends AbstractController {
             $redisKey = RedisKeyDict::getHashRoomFdList($roomId);
             $start    = 0;
             $batchNum = 100;
-            while ($batchFdList = XzChatApp::$connector->redis->zRevRange($redisKey, $start, $start + ($batchNum - 1))) {
+
+            $redis = new \Redis();
+            $redis->connect('127.0.0.1', 6379);
+
+            while ($batchFdList = $redis->zRevRange($redisKey, $start, $start + ($batchNum - 1))) {
                 print_r($batchFdList);
                 //给同房间的用户发通知
                 foreach ($batchFdList as $fd) {

@@ -14,6 +14,8 @@ use xzchat\XzChatApp;
 class RoomService extends BaseService {
     static function fdRelativeToRoom($fd, $roomId) {
         $redisKey = RedisKeyDict::getHashRoomFdList($roomId);
-        XzChatApp::$connector->redis->zAdd($redisKey, time(), $fd);
+        $redis = new \Redis();
+        $redis->connect('127.0.0.1', 6379);
+        $redis->zAdd($redisKey, time(), $fd);
     }
 }

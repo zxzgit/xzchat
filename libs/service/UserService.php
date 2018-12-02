@@ -21,8 +21,10 @@ class UserService extends BaseService {
     static function getLoginUser($fd, $userData = []) {
         $hasAuth = false;//是否验证成功
         if ($fd && $userData) {
-            $redis = XzChatApp::$connector->redis;
-            
+            $redis = new \Redis();
+            $redis->connect('127.0.0.1', 6379);
+
+
             $receiveInfo = $userData;
             if (!empty($receiveInfo) && isset($receiveInfo['uid']) && isset($receiveInfo['token'])) {
                 $redisUserInfoKey = RedisKeyDict::getHashUserInfoKey($receiveInfo['uid']);

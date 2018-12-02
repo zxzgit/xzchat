@@ -12,6 +12,9 @@ include 'vendor/autoload.php';
 use \xzchat\libs\RedisKeyDict;
 
 \xzchat\XzChatApp::run([
+    'moduleList' => [
+        'test' => \xzchat\libs\message\modules\test\MessageModule::class,
+    ],
     'messageDistributor' => \xzchat\libs\message\MessageDistributor::class,
     'event' => [
         'initConnector' => function () {
