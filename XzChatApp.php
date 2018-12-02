@@ -18,4 +18,10 @@ class XzChatApp
      * @var ConnectCollection $connector
      */
     static $connector;
+
+    public static function run(array $config = [])
+    {
+        self::$connector = new ConnectCollection($config);
+        self::$connector->run();
+    }
 }
