@@ -7,17 +7,18 @@
  */
 
 
-include 'vendor/autoload.php';
+include '../../vendor/autoload.php';
 
-use \xzchat\libs\RedisKeyDict;
+use \xzchat\test\libs\RedisKeyDict;
 
 \xzchat\XzChatApp::run([
     'moduleList' => [
-        'test' => \xzchat\libs\message\modules\test\MessageModule::class,
+        'test' => \xzchat\test\modules\test\MessageModule::class,
     ],
-    'messageDistributor' => \xzchat\libs\message\MessageDistributor::class,
+    'messageDistributor' => \xzchat\test\MessageDistributor::class,
     'event' => [
         'initConnector' => function () {
+            return;
             /** @var \Redis $redis */
             $initBatchClearNum = 1000;
             $redis = new \Redis();
@@ -60,6 +61,7 @@ use \xzchat\libs\RedisKeyDict;
             echo "afterMessage event";
         },
         'close' => function (&$server, $fd) {
+            return;
             echo "close event";
             //移除该链接用户信息
             $redis = new \Redis();

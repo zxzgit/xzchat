@@ -6,7 +6,7 @@
  * Time: 下午12:48
  */
 
-namespace xzchat\libs\message;
+namespace xzchat\libs;
 
 
 class MessageModule

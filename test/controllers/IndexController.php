@@ -5,10 +5,10 @@
  * Datetime: 2018/11/15 18:23
  */
 
-namespace xzchat\libs\message\controllers;
+namespace xzchat\test\controllers;
 
 
-class IndexController extends AbstractController {
+class IndexController extends BaseController {
     
     public function actionIndex() {
         

@@ -1,6 +1,6 @@
 <?php
 
-namespace xzchat\libs;
+namespace xzchat\test\libs;
 
 class RedisKeyDict {
     const KEY_PREFIX = 'rsc:';

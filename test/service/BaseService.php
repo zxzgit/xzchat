@@ -5,7 +5,7 @@
  * Datetime: 2018/11/19 12:21
  */
 
-namespace xzchat\libs\service;
+namespace xzchat\test\service;
 
 
 class BaseService {

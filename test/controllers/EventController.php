@@ -5,11 +5,10 @@
  * Datetime: 2018/11/15 18:23
  */
 
-namespace xzchat\libs\message\controllers;
+namespace xzchat\test\controllers;
 
-use xzchat\libs\RedisKeyDict;
 
-class EventController extends AbstractController {
+class EventController extends BaseController {
     
     public function actionInterRoom() {
         return $this->pushMsg(['event', 'msg']);

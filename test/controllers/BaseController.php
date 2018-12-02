@@ -5,12 +5,12 @@
  * Datetime: 2018/11/15 18:25
  */
 
-namespace xzchat\libs\message\controllers;
+namespace xzchat\test\controllers;
 
-use xzchat\libs\message\MessageDistributor;
-use xzchat\libs\service\UserService;
+use xzchat\test\MessageDistributor;
+use xzchat\test\service\UserService;
 
-abstract class AbstractController {
+class BaseController extends \xzchat\libs\AbstractController {
     const RETURN_CODE = [
         200 => 'Success',
         403 => 'Forbidden',
@@ -50,25 +50,6 @@ abstract class AbstractController {
         $eventType = 'action' . ucfirst($this->action);
         
         return $this->$eventType();
-    }
-    
-    /**
-     * 服务端向客户端发送信息 https://wiki.swoole.com/wiki/page/399.html
-     * @param array $data
-     * @param int   $code
-     * @param null  $fd
-     * @param int   $opCode
-     * @param bool  $finish
-     * @return mixed
-     */
-    public function pushMsg($data = [], $code = 200, $fd = null, $opCode = 1, $finish = true) {
-        $returnInfo = [
-            'code' => $code,
-            'data' => $data,
-        ];
-        $fd         = $fd ?: $this->frame->fd;
-        
-        return $fd && $this->distributor->connector->server->push($fd, json_encode($returnInfo), $opCode, $finish);
     }
     
     /**

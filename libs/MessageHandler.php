@@ -1,24 +1,19 @@
 <?php
 
-namespace xzchat\libs\message;
+namespace xzchat\libs;
 
-
-use xzchat\libs\ConnectCollection;
 
 class MessageHandler
 {
-    const isDoFork = false;
-
     /**
      * 用户信息处理
      * @param ConnectCollection $connector
      * @param $frame
-     * @param $msgType
-     * @param $data
+     * @param bool $isDoFork
      */
-    static public function msgDeal(&$connector, &$frame)
+    static public function msgDeal(&$connector, &$frame, $isDoFork = true)
     {
-        if (self::isDoFork) {
+        if ($isDoFork) {
             $pid = pcntl_fork();
             if ($pid == -1) {
                 //echo 'could not fork生成子进程失败';
@@ -26,10 +21,14 @@ class MessageHandler
                 echo '当前内存使用量：' . memory_get_usage(true) . PHP_EOL;
                 echo '当前子进程pid：' . posix_getpid() . PHP_EOL;
 
-                self::distributor($connector, $frame);
+                try{
+                    self::distributor($connector, $frame);
+                }catch (\Exception $exception){
+                    echo "信息分发错误，错误信息：" . $exception->getMessage() . PHP_EOL;
+                }
 
                 //处理完信息之后杀死进程
-                posix_kill(posix_getpid(), SIGINT);
+                posix_kill(posix_getpid(), SIGTERM);
             } else {
                 //echo "I'm the parent process 子进程的pid值：{$pid} \n";
             }
@@ -43,6 +42,11 @@ class MessageHandler
         return $receiveInfo = json_decode($frameData, true);
     }
 
+    /**
+     * 信息分发处理
+     * @param $connector
+     * @param $frame
+     */
     static function distributor(&$connector, &$frame)
     {
         echo str_repeat('=', 20) . PHP_EOL;

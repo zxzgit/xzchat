@@ -5,13 +5,12 @@
  * Datetime: 2018/11/15 18:23
  */
 
-namespace xzchat\libs\message\controllers;
+namespace xzchat\test\controllers;
 
-use xzchat\libs\RedisKeyDict;
-use xzchat\libs\service\RoomService;
-use xzchat\XzChatApp;
+use xzchat\test\libs\RedisKeyDict;
+use xzchat\test\service\RoomService;
 
-class RoomController extends AbstractController {
+class RoomController extends BaseController {
     
     public function actionInterRoom() {
         if ($this->checkUserLogin() && isset($this->data['roomId']) && $this->data['roomId']) {

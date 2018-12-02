@@ -5,12 +5,11 @@
  * Datetime: 2018/11/15 18:23
  */
 
-namespace xzchat\libs\message\controllers;
+namespace xzchat\test\controllers;
 
-use xzchat\libs\RedisKeyDict;
-use xzchat\libs\service\UserService;
+use xzchat\test\service\UserService;
 
-class UserController extends AbstractController {
+class UserController extends BaseController {
     
     public function actionLogin() {
         $result = UserService::doLogin($this->frame->fd, $this->data);

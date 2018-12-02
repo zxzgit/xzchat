@@ -5,10 +5,10 @@
  * Datetime: 2018/11/19 12:21
  */
 
-namespace xzchat\libs\service;
+namespace xzchat\test\service;
 
 
-use xzchat\libs\RedisKeyDict;
+use xzchat\test\libs\RedisKeyDict;
 use xzchat\XzChatApp;
 
 class UserService extends BaseService {

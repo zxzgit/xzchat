@@ -3,18 +3,59 @@
  * Created by zxzTool.
  * User: zxz
  * Datetime: 2018/11/15 18:03
+ *
+    \xzchat\XzChatApp::run([
+        'moduleList' => [
+            'test' => \xzchat\test\modules\test\MessageModule::class,
+         ],
+        'messageDistributor' => \xzchat\test\MessageDistributor::class,
+        'event' => [
+                'initConnector' => function () {},
+                'workerStart'   => function (&$server, $id) {},
+                'open'          => function (&$server, &$req) {},
+                'beforeMessage' => function (&$server, &$frame) {},
+                'afterMessage'  => function (&$server, &$frame) {},
+                'close'         => function (&$server, $fd) {},
+                'request'       => function (&$request, &$response) {},
+        ]
+    ]);
  */
 
 namespace xzchat\libs;
 
-use xzchat\libs\message\MessageHandler;
 
 class ConnectCollection
 {
+    /**
+     * @var bool 是否开启生成子线程处理，开启后控制器代码修改可直接生效
+     */
+    public $isDoFork = true;
+
+    /**
+     * @var array 模块设置
+     * $moduleList = [
+     *    'test'   => \xzchat\test\modules\test\MessageModule::class,
+     *    '模块名称' => '模块类名',
+     * ]
+     */
     public $moduleList = [];
+
+    /**
+     * @var null|MessageModule 当前路由模块对象
+     */
     public $module;
+
+    /**
+     * @var string 默认控制器
+     */
     public $defaultController = 'index';
+
+    /**
+     * @var MessageDistributor 内容分发器
+     * 'messageDistributor' => \xzchat\test\MessageDistributor::class,
+     */
     public $messageDistributor;
+
     /**
      * @var array 钩子
      * $event = [
@@ -66,6 +107,8 @@ class ConnectCollection
         }
 
         $this->checkProperty();
+
+        $this->setErrorHandler();
     }
 
     /**
@@ -123,7 +166,7 @@ class ConnectCollection
 
         $this->server->on('message', function ($server, $frame) {
             $this->triggerEvent('beforeMessage', [&$server, &$frame]);
-            MessageHandler::msgDeal($server->connector, $frame);
+            MessageHandler::msgDeal($this, $frame, $this->isDoFork);
         });
 
         $this->server->on('close', function ($server, $fd) {
@@ -138,9 +181,18 @@ class ConnectCollection
     /**
      * 检测必要参数设置
      */
-    protected function checkProperty(){
-        if($this->messageDistributor == null){
+    protected function checkProperty()
+    {
+        if ($this->messageDistributor == null) {
             throw new \Exception('请正确设置' . __CLASS__ . '::$messageDistributor 必须设置');
         }
+    }
+
+    /**
+     * 异常处理
+     */
+    protected function setErrorHandler()
+    {
+        ErrorException::initErrorHandler();
     }
 }
