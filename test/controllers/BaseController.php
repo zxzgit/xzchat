@@ -35,14 +35,6 @@ class BaseController extends \xzchat\libs\AbstractController {
         $this->init($config);
     }
     
-    protected function init($config) {
-        foreach ($config as $configKey => $configVal) {
-            if (property_exists(get_class($this), $configKey)) {
-                $this->$configKey = $configVal;
-            }
-        }
-    }
-    
     /**
      * @return array
      */
