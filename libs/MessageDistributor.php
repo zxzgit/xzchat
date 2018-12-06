@@ -26,31 +26,34 @@ class MessageDistributor{
     {
         $this->connector = &$connector;
         $this->frame = $frame;
-        $this->route = isset($data['route']) && trim($data['route']) ? (string)$data['route'] : '';
+        $this->route = $this->parseRoute($data);
         $this->data = $data;
     }
 
     public function run()
     {
-        //$this->parseRoute();
-
-        return $this->simpleRoute();
+        return $this->dealRoute();
     }
 
     /**
-     * todo
+     * 解析路由
      */
-    public function parseRoute()
+    public function parseRoute($data)
     {
-        $routeInfo = explode('/', $this->route);
-        $baseMsgLibDir = dirname(__FILE__) . DIRECTORY_SEPARATOR;//定位到/vagrant/project1/public/websocket/xzchat/libs/message
+        //如果定义了自定义解析路由函数
+        $routeDataFormat = $this->connector->parseRouteDataFormat;
+        if (isset($this->connector->parseRouteMap[$routeDataFormat]) && is_callable($this->connector->parseRouteMap[$routeDataFormat])) {
+            return call_user_func($this->connector->parseRouteMap[$routeDataFormat], $data);
+        } else {
+            throw new \Exception("route data format method '{$routeDataFormat}' can't find in ConnectCollection::parseRouteDataFormat property");
+        }
     }
 
     /**
      * 简单路由到控制器
      * @return array
      */
-    public function simpleRoute()
+    public function dealRoute()
     {
         $refObj = new \ReflectionObject($this);
         $routeInfo = explode('/', $this->route);
@@ -65,7 +68,7 @@ class MessageDistributor{
             $controller = array_pop($routeInfo) ?: $this->connector->defaultController;
             /** @var AbstractController $msgProcessor */
             $msgProcessorClass = implode('\\', array_filter([$refObj->getNamespaceName(), 'controllers', implode('\\', $routeInfo), ucfirst($controller) . 'Controller']));
-            $msgProcessor = (new $msgProcessorClass($this, $this->frame, $this->data, ['action' => $action, 'data' => isset($this->data['data']) ? $this->data['data'] : []]));
+            $msgProcessor = (new $msgProcessorClass($this, $this->frame, $this->data, ['action' => $action]));
 
             return $msgProcessor->run();
         }

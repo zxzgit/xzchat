@@ -74,7 +74,7 @@ class MessageModule
             $controller = array_pop($routeInfo) ?: $this->defaultController;
             /** @var AbstractController $msgProcessor */
             $msgProcessorClass = implode('\\', array_filter([$refObj->getNamespaceName(), 'controllers', implode('\\', $routeInfo), ucfirst($controller) . 'Controller']));
-            $msgProcessor = (new $msgProcessorClass($this->distributor, $this->distributor->frame, $this->distributor->data, ['action' => $action, 'data' => isset($this->distributor->data['data']) ? $this->distributor->data['data'] : []]));
+            $msgProcessor = (new $msgProcessorClass($this->distributor, $this->distributor->frame, $this->distributor->data, ['action' => $action]));
 
             return $msgProcessor->run();
         }

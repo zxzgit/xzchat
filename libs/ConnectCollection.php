@@ -27,6 +27,35 @@ namespace xzchat\libs;
 class ConnectCollection
 {
     /**
+     * 路由解析函数映射
+     * $parseRouteMap = [
+     *     'json' => function($data){
+     *         //$data 为客户端传过来的数据
+     *         //do something parse
+     *         return 'module/controller/action';//必须返回该格式的字符串路由数据，e.g controller/action or module/submodule/controller/action
+     *      }
+     *     'xml' => function($data){
+     *         //do something parse
+     *         return 'module/controller/action';
+     *     }
+     * ]
+     * @var array
+     */
+    public $parseRouteMap = [];
+
+    /**
+     * 解析格式，默认为json,对应 $parseRouteMap 中的路由解析函数映射
+     * @var string
+     */
+    public $parseRouteDataFormat = 'json';
+
+    /**
+     * 该参数在 $parseRouteDataFormat = 'json'时有效，json中路由信息属性名
+     * @var string
+     */
+    public $parseRouteDataFormatRouteProperty = 'route';
+
+    /**
      * @var bool 是否开启生成子线程处理，开启后控制器代码修改可直接生效
      */
     public $isDoFork = true;
@@ -109,6 +138,8 @@ class ConnectCollection
         $this->checkProperty();
 
         $this->setErrorHandler();
+
+        $this->addDefaultRouteParseFn();
     }
 
     /**
@@ -194,5 +225,16 @@ class ConnectCollection
     protected function setErrorHandler()
     {
         ErrorException::initErrorHandler();
+    }
+
+    /**
+     * 添加默认路由解析函数
+     */
+    public function addDefaultRouteParseFn()
+    {
+        $this->parseRouteMap['json'] = function ($data) {
+            $data = json_decode($data, true);
+            return isset($data[$this->parseRouteDataFormatRouteProperty]) && trim($data[$this->parseRouteDataFormatRouteProperty]) ? (string)$data[$this->parseRouteDataFormatRouteProperty] : '';
+        };
     }
 }

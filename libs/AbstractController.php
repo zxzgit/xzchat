@@ -13,18 +13,41 @@ abstract class AbstractController {
         200 => 'Success',
         403 => 'Forbidden',
     ];
-    
+
     /**
      * @var MessageDistributor $distributor
      */
-    public    $distributor;
-    public    $frame;
-    public    $distributorData;
-    public    $action;
-    public    $data        = [];
-    protected $isLoginUser = null;
-    protected $user        = false;
-    
+    public $distributor;
+
+    /**
+     * @var $frame
+     */
+    public $frame;
+
+    /**
+     * @var 客户端发送的原始数据
+     */
+    public $distributorData;
+
+    /**
+     * @var route action
+     */
+    public $action;
+
+    /**
+     * @var main data
+     */
+    public $data;
+
+    /**
+     * @var parse data from distributor data
+     */
+    public $parsedMsgData;
+
+    /**
+     * @var string main data property name in $parsedMsgData while use default parse
+     */
+    public $dataPropertyInParsedMsgData = 'data';
     
     function __construct(&$distributor, $frame, $distributorData, $config = []) {
         $this->distributor     = &$distributor;
@@ -32,13 +55,37 @@ abstract class AbstractController {
         $this->distributorData = $distributorData;
         $this->init($config);
     }
-    
+
+    /**
+     * @param $config
+     */
     protected function init($config) {
         foreach ($config as $configKey => $configVal) {
             if (property_exists(get_class($this), $configKey)) {
                 $this->$configKey = $configVal;
             }
         }
+
+        $this->parsedMsgData = $this->parseMsgData();
+        $this->data = $this->parseData();
+    }
+
+    /**
+     * 从原始传输数据中解析出数据,可重写自定义
+     * @return mixed
+     */
+    protected function parseMsgData()
+    {
+        return json_decode($this->distributorData, true);
+    }
+
+    /**
+     * 从接受数据中解析主要数据,可重写自定义
+     * @return array
+     */
+    protected function parseData()
+    {
+        return isset($this->parsedMsgData[$this->dataPropertyInParsedMsgData]) ? $this->parsedMsgData[$this->dataPropertyInParsedMsgData] : [];
     }
     
     /**

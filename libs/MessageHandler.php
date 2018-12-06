@@ -56,12 +56,10 @@ class MessageHandler
             echo "收到的信息: {$frame->data}" . PHP_EOL;
             echo "链接id: {$frame->fd}" . PHP_EOL;
 
-            $data = self::parseData($frame->data);//传回来的信息是json
-
             //消息分发器构建
             $messageDistributor = $connector->messageDistributor;
             /** @var MessageDistributor $distributor */
-            $distributor = new $messageDistributor($connector, $frame, $data);
+            $distributor = new $messageDistributor($connector, $frame, $frame->data);
             $distributor->run();
 
             echo str_repeat('=', 20) . PHP_EOL;
